@@ -7,6 +7,8 @@ public class MovementController : MonoBehaviour
     public GameObject cam;
     public float speed;
     public float minTurnAngle = 30.0f;
+    public GameObject leftController;
+    public GameObject rightController;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
