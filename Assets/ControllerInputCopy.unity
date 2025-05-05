@@ -3843,10 +3843,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 57713526}
-  speed: 0
-  minTurnAngle: 30
-  leftController: {fileID: 1521530346}
-  rightController: {fileID: 1271057973}
+  maxSpeed: 1
+  accel: 2
+  decel: 0.15
+  minDiff: 0.01
+  minTurnAngle: 10
+  leftController: {fileID: 1206713284}
+  rightController: {fileID: 1613825578}
+  tmpro: {fileID: 1795247383}
 --- !u!4 &913282344
 Transform:
   m_ObjectHideFlags: 0
@@ -6644,11 +6648,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4346727374823547005, guid: 6a06ae3b5dad94140b1b27164d137645, type: 3}
   m_PrefabInstance: {fileID: 1257344839}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1271057973 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6169362948042999665, guid: ca8578bb64a826749ba21c3d7277db2f, type: 3}
-  m_PrefabInstance: {fileID: 1613825574}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1299584300
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7600,11 +7599,6 @@ MonoBehaviour:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5433409084877224776, guid: 1e1b333ac5c22514aae89a296f1f44ff, type: 3}
   m_PrefabInstance: {fileID: 1495787096}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1521530346 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6169362948042999665, guid: ca8578bb64a826749ba21c3d7277db2f, type: 3}
-  m_PrefabInstance: {fileID: 1206713280}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1588199578
 GameObject:
