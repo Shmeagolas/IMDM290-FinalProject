@@ -22,6 +22,8 @@ public class MinerSpawn : MonoBehaviour
     private List<GameObject> mushrooms = new List<GameObject>(); 
     private List<bool> shoomGlowStatus = new List<bool>();
 
+    private HashSet<IBubbleTarget> targetsInBubble = new HashSet<IBubbleTarget>();
+
     //randomly spawn the miners throughout the spawnpoints
     void Start()
     {
@@ -87,6 +89,24 @@ public class MinerSpawn : MonoBehaviour
         } else {
             Debug.Log("So Close! You saved " + saved + " miners out of " + minerSavedStatus.Count + " miners");
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        IBubbleTarget target = other.GetComponent<IBubbleTarget>();
+        if (target != null && miners.Contains(other.gameObject))
+        {
+            targetsInBubble.Add(target);
+        }
+    }
+
+    public void TriggerBubbleEffect()
+    {
+        foreach (var target in targetsInBubble)
+        {
+            SaveMiner();
+        }
+
     }
 
     void SpawnMushrooms() 
