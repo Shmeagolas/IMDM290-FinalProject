@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 // this class should keep track of all the spawn points in the game and randomly spread the miners throughout them, 
 // spawning a miner in the location of each spawn point. 
 
 // this class should also keep track of all the mushroom spawn points and randomly put mushrooms throughout them,
 public class MinerSpawn : MonoBehaviour
 {
+    public InputActionProperty rightTriggerAction;
     // miner vars
     public int numMiners; // set number of miners
     public List<GameObject> minerSpawnPoints; // should add in unity
@@ -47,6 +49,9 @@ public class MinerSpawn : MonoBehaviour
             miner.transform.position = spawnPoint.position + offset;
             miner.transform.rotation = spawnPoint.rotation;
 
+            miner minerComponent = miner.AddComponent<miner>();
+            minerComponent.index = i;
+
             Renderer sphereRenderer = miner.GetComponent<Renderer>();
             Color color = Color.HSVToRGB(30f / 360f, 0.3f, 0.85f); // Full saturation and brightness
             sphereRenderer.material.color = color;
@@ -62,7 +67,7 @@ public class MinerSpawn : MonoBehaviour
     //when a miner is saved, set it's index to true and make it disappear from the map
     public void SaveMiner(int index)
     {
-        if (index >= 0 && index < miners.Count && minerSavedStatus[index])
+        if (index >= 0 && index < miners.Count && !minerSavedStatus[index])
         {
             minerSavedStatus[index] = true;
             // Make the miner disappear 
@@ -91,6 +96,7 @@ public class MinerSpawn : MonoBehaviour
         }
     }
 
+    // if a miner is in a certain range of the player
     private void OnTriggerEnter(Collider other)
     {
         IBubbleTarget target = other.GetComponent<IBubbleTarget>();
@@ -100,13 +106,29 @@ public class MinerSpawn : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        rightTriggerAction.action.Enable();
+    }
+
     public void TriggerBubbleEffect()
     {
-        foreach (var target in targetsInBubble)
-        {
-            SaveMiner();
-        }
+        float triggerValue = rightTriggerAction.action.ReadValue<float>();
+        //Debug.Log("Trigger value: " + triggerValue);
 
+        // if the trigger is pressed, save the miners in the bubble around the player
+        if (triggerValue == 1)
+        {
+            foreach (var target in targetsInBubble)
+            {
+                GameObject obj = ((MonoBehaviour)target).gameObject;
+                miner minerComponent = obj.GetComponent<miner>();
+                if (minerComponent != null)
+                {
+                    SaveMiner(minerComponent.index);
+                }
+            }
+        }
     }
 
     void SpawnMushrooms() 
