@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "IMD290-FinalProject.sln"
+    "dotnet.defaultSolution": "IMDM290-FinalProject.sln"
 }
