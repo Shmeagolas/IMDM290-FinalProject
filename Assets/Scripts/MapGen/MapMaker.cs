@@ -20,8 +20,8 @@ public class MapMaker : MonoBehaviour
     void Start()
     {
         TileSpawner.tiles = tilePrefabs;
-        //TileSpawner.SpawnMap(PremadeMaps.mapOne);
-        MakeMap();
+        TileSpawner.SpawnMap(PremadeMaps.mapOne);
+        //MakeMap();
     }
 
     void Update()

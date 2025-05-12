@@ -3,8 +3,9 @@ using UnityEngine;
 
 public static class TileGrid
 {
-    public static float width = 1.8f;
-    public static float height = 2f;
+    private static float scalar = .75f;
+    public static float width = 10f * scalar;
+    public static float height = (10f / 0.8660254f) * scalar;
     
     public static Vector3 GridToWorld(Vector2 pos)
     {
