@@ -62,20 +62,20 @@ public class TestPathFollower : MonoBehaviour
             ComputeEndDirs();
 
             t = 0;
-            if (leftEndDir.HasValue)
+            if (straightDir.HasValue)
             {
-                endPos = GetPosition(gridPos, leftEndDir.Value);
-                turnMode = MovementController.TurnMode.Left;
+                endPos = GetPosition(gridPos, straightDir.Value);
+                turnMode = MovementController.TurnMode.Straight;
             }
             else if (rightEndDir.HasValue)
             {
                 endPos = GetPosition(gridPos, rightEndDir.Value);
                 turnMode = MovementController.TurnMode.Right;
             }
-            else if(straightDir.HasValue)
+            else if (leftEndDir.HasValue)
             {
-                endPos = GetPosition(gridPos, straightDir.Value);
-                turnMode = MovementController.TurnMode.Straight;
+                endPos = GetPosition(gridPos, leftEndDir.Value);
+                turnMode = MovementController.TurnMode.Left;
             }
             else
             {
@@ -101,8 +101,8 @@ public class TestPathFollower : MonoBehaviour
         {
             case HexTile.StartDir.N: return Mathf.PI / 2;
             case HexTile.StartDir.S: return -Mathf.PI / 2;
-            case HexTile.StartDir.NW: return 4 * Mathf.PI / 6;
-            case HexTile.StartDir.SW: return -4 * Mathf.PI / 6;
+            case HexTile.StartDir.NW: return 5 * Mathf.PI / 6;
+            case HexTile.StartDir.SW: return -5 * Mathf.PI / 6;
             case HexTile.StartDir.NE: return Mathf.PI / 6;
             case HexTile.StartDir.SE: return -Mathf.PI / 6;
             default: return 0;
@@ -203,10 +203,14 @@ public class TestPathFollower : MonoBehaviour
                 break;
         }
         int degOffset = GetDeg(entry.Item2);
+        leftEndDir = null;
+        straightDir = null;
+        rightEndDir = null;
         for (int i = 0; i < dirs.Count; i++)
         {
             dirs[i] += degOffset;
             dirs[i] %= 360;
+            print($"dirs[{i}] -> " + dirs[i]);
             if (GetDir(dirs[i]) == startDir)
             {
                 //Debug.LogError("remove");
@@ -218,18 +222,12 @@ public class TestPathFollower : MonoBehaviour
 
             if (dirs[i] == (GetDeg(startDir) + 120) % 360)
                 leftEndDir = GetDir(dirs[i]);
-            else
-                leftEndDir = null;
-
-            if (dirs[i] == (GetDeg(startDir) + 180) % 360)
+            else if (dirs[i] == (GetDeg(startDir) + 180) % 360)
                 straightDir = GetDir(dirs[i]);
-            else
-                straightDir = null;
+            else if (dirs[i] == (GetDeg(startDir) + 240) % 360)
+                rightEndDir = GetDir(dirs[i]);                
 
-            if (dirs[i] == (GetDeg(startDir) + 240) % 360)
-                rightEndDir = GetDir(dirs[i]);
-            else
-                rightEndDir = null;
+            print($"{leftEndDir}, {straightDir}, {rightEndDir}");
         }
     }
 }
