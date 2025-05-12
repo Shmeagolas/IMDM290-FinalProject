@@ -13,6 +13,11 @@ public class CAWCAWCAW : MonoBehaviour
         rightTriggerAction.action.Enable();
     }
 
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     // Update is called once per frame
     void Update()
     {
