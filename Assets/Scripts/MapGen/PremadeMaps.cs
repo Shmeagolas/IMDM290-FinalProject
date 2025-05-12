@@ -24,4 +24,15 @@ public static class PremadeMaps
         (new Vector2(2,3), HexTile.StartDir.NE, HexTile.TileType.STRAIGHT),
         };
 
+    static public HashSet<(Vector2, HexTile.StartDir, HexTile.TileType)> mapTest = new()
+    {
+        (Vector2.zero, HexTile.StartDir.S, HexTile.TileType.STRAIGHT),
+        (Vector2.up, HexTile.StartDir.S, HexTile.TileType.STRAIGHT),
+        (-Vector2.right, HexTile.StartDir.S, HexTile.TileType.STRAIGHT),
+        (-Vector2.right * 2, HexTile.StartDir.S, HexTile.TileType.STRAIGHT),
+        (-Vector2.right * 3, HexTile.StartDir.S, HexTile.TileType.STRAIGHT),
+        (-Vector2.right * 4, HexTile.StartDir.S, HexTile.TileType.STRAIGHT),
+        (-Vector2.right * 5, HexTile.StartDir.S, HexTile.TileType.STRAIGHT),
+    };
+
 }

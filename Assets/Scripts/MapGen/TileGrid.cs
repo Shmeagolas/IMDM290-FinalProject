@@ -19,4 +19,17 @@ public static class TileGrid
             return new Vector3(x * width , 0f, y * height + (height / 2f));
         }
     }
+    public static Vector2 WorldToGrid(Vector3 worldPos)
+    {
+        int x = Mathf.RoundToInt(worldPos.x / width);
+
+        // Check if this is an odd column
+        bool isOdd = x % 2 != 0;
+
+        // Adjust z position if it's offset
+        float adjustedZ = worldPos.z - (isOdd ? height / 2f : 0f);
+        int y = Mathf.RoundToInt(adjustedZ / height);
+
+        return new Vector2(x, y);
+    }
 }
