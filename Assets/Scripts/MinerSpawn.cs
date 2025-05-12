@@ -33,6 +33,14 @@ public class MinerSpawn : MonoBehaviour
         SpawnMushrooms();
     }
 
+    public void RegisterMinerSpawnPoint(GameObject point)
+    {
+        if (!minerSpawnPoints.Contains(point))
+        {
+            minerSpawnPoints.Add(point);
+        }
+    }
+
     void SpawnMiners() 
     {
         List<GameObject> availableMinerSpawns = new List<GameObject>(minerSpawnPoints);
