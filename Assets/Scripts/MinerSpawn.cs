@@ -69,6 +69,7 @@ public class MinerSpawn : MonoBehaviour
     {
         if (index >= 0 && index < miners.Count && !minerSavedStatus[index])
         {
+            Debug.Log("you saved a miner. yippee!");
             minerSavedStatus[index] = true;
             // Make the miner disappear 
             miners[index].SetActive(false);
@@ -113,12 +114,14 @@ public class MinerSpawn : MonoBehaviour
 
     public void TriggerBubbleEffect()
     {
+        Debug.Log("somethings in the bubble");
         float triggerValue = rightTriggerAction.action.ReadValue<float>();
-        //Debug.Log("Trigger value: " + triggerValue);
+        Debug.Log("Trigger value: " + triggerValue);
 
         // if the trigger is pressed, save the miners in the bubble around the player
         if (triggerValue == 1)
         {
+            Debug.Log("caw caw cfaw");
             foreach (var target in targetsInBubble)
             {
                 GameObject obj = ((MonoBehaviour)target).gameObject;
@@ -126,6 +129,7 @@ public class MinerSpawn : MonoBehaviour
                 if (minerComponent != null)
                 {
                     SaveMiner(minerComponent.index);
+                    
                 }
             }
         }
