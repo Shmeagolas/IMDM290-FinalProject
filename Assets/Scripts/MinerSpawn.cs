@@ -26,24 +26,33 @@ public class MinerSpawn : MonoBehaviour
 
     private HashSet<IBubbleTarget> targetsInBubble = new HashSet<IBubbleTarget>();
 
-    //randomly spawn the miners throughout the spawnpoints
-    void Start()
-    {
-        SpawnMiners();
-        SpawnMushrooms();
-    }
-
     public void RegisterMinerSpawnPoint(GameObject point)
     {
         if (!minerSpawnPoints.Contains(point))
         {
+            Debug.Log("abracadabra");
             minerSpawnPoints.Add(point);
         }
+    }
+
+    //randomly spawn the miners throughout the spawnpoints
+    void Start()
+    {
+        StartCoroutine(DelayedSpawn());
+    }
+
+    IEnumerator DelayedSpawn()
+    {
+        yield return null; // wait one frame
+        SpawnMiners();
+        SpawnMushrooms();
     }
 
     void SpawnMiners() 
     {
         List<GameObject> availableMinerSpawns = new List<GameObject>(minerSpawnPoints);
+        Debug.Log("whaty ius the count:" + availableMinerSpawns);
+
 
         for (int i = 0; i < numMiners && availableMinerSpawns.Count > 0; i++)
         {
@@ -53,6 +62,7 @@ public class MinerSpawn : MonoBehaviour
 
             // create miner and set it's position to that spawn point
             GameObject miner = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+
             Vector3 offset = new Vector3(0, 0.5f, 0);
             miner.transform.position = spawnPoint.position + offset;
             miner.transform.rotation = spawnPoint.rotation;
