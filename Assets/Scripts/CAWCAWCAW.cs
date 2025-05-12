@@ -7,6 +7,7 @@ public class CAWCAWCAW : MonoBehaviour
 {
     public InputActionProperty rightTriggerAction;
     public AudioSource audioSource;
+    public AudioClip clip;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void OnEnable()
     {
@@ -26,7 +27,7 @@ public class CAWCAWCAW : MonoBehaviour
 
         if (triggerValue == 1)
         {
-            audioSource.PlayOneShot(yourClip);
+            audioSource.PlayOneShot(clip);
         }
     }
 }
