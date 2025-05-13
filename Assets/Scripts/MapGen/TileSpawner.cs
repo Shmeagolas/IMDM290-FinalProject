@@ -9,13 +9,23 @@ public static class TileSpawner
     private static readonly Dictionary<HexTile.TileType, Queue<GameObject>> pool = new();
     private static readonly List<GameObject> activeTiles = new();
 
-
+    private static readonly Dictionary<HexTile.TileType, int> variantCount = new()
+    {
+        { HexTile.TileType.STRAIGHT,     2 },
+        { HexTile.TileType.LCURVE,       4 }, 
+        { HexTile.TileType.RCURVE,       4 }, 
+        { HexTile.TileType.DCURVE,       2 },
+        { HexTile.TileType.LCSTRAIGHT,   2 }, 
+        { HexTile.TileType.RCSTRAIGHT,   2 },  
+        { HexTile.TileType.NULL,         1 }   
+    };
     public static void SpawnMap(HashSet<(Vector2, HexTile.StartDir, HexTile.TileType)> tiles)
     {
         ClearActive();
         foreach(var(pos, dir, type) in tiles)
         {
             GameObject go = GetFromPool(type);
+            SelectVariant(go, type);
             go.transform.position = TileGrid.GridToWorld(pos);
             go.transform.rotation = Rotation(dir);
             go.SetActive(true);
@@ -88,5 +98,18 @@ public static class TileSpawner
         }
         Debug.Log("Improper dir in TileSpawner Rotation");
         return Quaternion.Euler(0, 0, 0);
+    }
+
+    private static void SelectVariant(GameObject go, HexTile.TileType type)
+    {
+        if (!variantCount.TryGetValue(type, out int count))
+            return;
+
+        int chosen = Random.Range(0, count);
+        for (int i = 0; i < count; i++)
+        {
+            var child = go.transform.GetChild(i).gameObject;
+            child.SetActive(i == chosen);
+        }
     }
 }
