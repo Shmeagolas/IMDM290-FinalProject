@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.Rendering;
+//using UnityEditor.Experimental.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 // this class should keep track of all the spawn points in the game and randomly spread the miners throughout them, 
@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 // this class should also keep track of all the mushroom spawn points and randomly put mushrooms throughout them,
 public class MinerSpawn : MonoBehaviour
 {
+    public static MinerSpawn Instance;
     public InputActionProperty rightTriggerAction;
     // miner vars
     public int numMiners; // set number of miners
@@ -40,6 +41,7 @@ public class MinerSpawn : MonoBehaviour
     //randomly spawn the miners throughout the spawnpoints
     void Start()
     {
+        Instance = this;    
         StartCoroutine(DelayedSpawn());
     }
     private void Update()
@@ -105,6 +107,24 @@ public class MinerSpawn : MonoBehaviour
         }
     }
 
+    public bool IsAllMinersSaved()
+    {
+        foreach (var stat in minerSavedStatus)
+        {
+            print("wow");
+            if (stat == false) return false;
+        }
+        return true;
+    }
+    public int GetMinerCount()
+    {
+        int i = 0;
+        foreach (var stat in minerSavedStatus)
+        {
+            if (stat == true) i += 1;
+        }
+        return i;
+    }
     //count all the true in the miners saved list of bools. If everything is true: Win
     // otherwise return x/total miners saved 
     void ReturnFinalCount()

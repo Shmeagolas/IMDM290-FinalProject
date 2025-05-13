@@ -21,7 +21,7 @@ public class PoisonEffect : MonoBehaviour
     {
         if (!canFade)
         {
-            if (Time.time - startTime >= 120f) // 2 minutes
+            if (Time.time - startTime >= 10f) // 2 minutes
             {
                 Debug.Log("starting the poisons ooooh");
                 canFade = true;

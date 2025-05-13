@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+//using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using static MovementController;
 using static UnityEngine.Rendering.DebugUI.Table;
@@ -10,6 +11,9 @@ using static UnityEngine.Rendering.HighDefinition.ScalableSettingLevelParameter;
 
 public class PathFollower : MonoBehaviour
 {
+    public TMPro.TextMeshProUGUI[] numMinerText;
+    public GameObject loseScreen;
+    public GameObject winScreen;
     HashSet<(Vector2, HexTile.StartDir, HexTile.TileType)> map;
     public GameObject cam;
     public float maxSpeed;
@@ -117,9 +121,23 @@ public class PathFollower : MonoBehaviour
 
         if (grid != gridPos)
         {
+            
             print("new grid " + grid + ", time: " + Time.time);
             gridPos = grid;
+            
+            if (gridPos == new Vector2(0,-1))
+            {
+                var count = MinerSpawn.Instance.GetMinerCount().ToString();
+                foreach (var txt in numMinerText)
+                {
+                    txt.text = count;
+                }
 
+                if (MinerSpawn.Instance.IsAllMinersSaved())
+                    winScreen.SetActive(true);
+                else
+                    loseScreen.SetActive(true);
+            }
             switch (turnMode.HasValue ? GetDir(turnMode.Value) : HexTile.StartDir.N)
             {
                 case HexTile.StartDir.N: startDir = HexTile.StartDir.S; break;
