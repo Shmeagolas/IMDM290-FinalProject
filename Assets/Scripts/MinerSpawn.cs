@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 // this class should keep track of all the spawn points in the game and randomly spread the miners throughout them, 
@@ -40,12 +42,17 @@ public class MinerSpawn : MonoBehaviour
     {
         StartCoroutine(DelayedSpawn());
     }
+    private void Update()
+    {
+        cawcaw();
+    }
 
     IEnumerator DelayedSpawn()
     {
         yield return null; // wait one frame
         SpawnMiners();
         SpawnMushrooms();
+        cawcaw();
     }
 
     void SpawnMiners() 
@@ -153,6 +160,25 @@ public class MinerSpawn : MonoBehaviour
                     SaveMiner(minerComponent.index);
                     
                 }
+            }
+        }
+    }
+
+    public void cawcaw()
+    {
+        float triggerValue = rightTriggerAction.action.ReadValue<float>();
+        Debug.Log("Trigger value: " + triggerValue);
+
+        if (triggerValue == 1)
+        {
+            int i = 0;
+            foreach (var miner in miners)
+            {
+                if (TileGrid.WorldToGrid(miner.transform.position) == PathFollower.gridPos)
+                {
+                    SaveMiner(i);
+                }
+                i++;
             }
         }
     }

@@ -24,7 +24,7 @@ public class PathFollower : MonoBehaviour
     public TMPro.TextMeshProUGUI tmpro;
     Vector3 lastLeftPos;
     Vector3 lastRightPos;
-    Vector2 gridPos = Vector2.down * 100000;
+    public static Vector2 gridPos = Vector2.down * 100000;
     Vector3 startPos;
     Vector3 endPos;
     HexTile.StartDir startDir;
