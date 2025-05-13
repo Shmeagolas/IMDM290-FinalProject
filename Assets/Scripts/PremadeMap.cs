@@ -8,7 +8,7 @@ public class PremadeMap : MonoBehaviour
     void Start()
     {
         TileSpawner.tiles = tiles;
-        TileSpawner.SpawnMap(PremadeMaps.mapTwo);
+        TileSpawner.SpawnMap(PremadeMaps.mapOne);
     }
 
     // Update is called once per frame
