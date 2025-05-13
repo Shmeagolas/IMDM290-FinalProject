@@ -4,12 +4,25 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using UnityEngine;
+using static MovementController;
 using static UnityEngine.Rendering.DebugUI.Table;
+using static UnityEngine.Rendering.HighDefinition.ScalableSettingLevelParameter;
 
-public class TestPathFollower : MonoBehaviour
+public class PathFollower : MonoBehaviour
 {
     HashSet<(Vector2, HexTile.StartDir, HexTile.TileType)> map;
-    public float speed;
+    public GameObject cam;
+    public float maxSpeed;
+    float speed;
+    public float accel;
+    public float decel;
+    public float minDiff = 0.01f;
+    public float minTurnAngle = 10.0f;
+    public GameObject leftController;
+    public GameObject rightController;
+    public TMPro.TextMeshProUGUI tmpro;
+    Vector3 lastLeftPos;
+    Vector3 lastRightPos;
     Vector2 gridPos = Vector2.down * 100000;
     Vector3 startPos;
     Vector3 endPos;
@@ -17,38 +30,95 @@ public class TestPathFollower : MonoBehaviour
     HexTile.StartDir? leftEndDir = null;
     HexTile.StartDir? rightEndDir = null;
     HexTile.StartDir? straightDir = null;
-    MovementController.TurnMode? turnMode = null;
+    public bool vrEnabled = false;
+    public enum TurnMode
+    {
+        Left, Right, Straight
+    }
+    TurnMode? turnMode = null;
     float t = 0;
     void Start()
     {
         map = PremadeMaps.mapOne;
     }
 
-    HexTile.StartDir GetDir(MovementController.TurnMode mode)
+    HexTile.StartDir GetDir(TurnMode mode)
     {
         switch(mode)
         {
-            case MovementController.TurnMode.Left:
+            case TurnMode.Left:
                 return leftEndDir.Value;
-            case MovementController.TurnMode.Straight:
+            case TurnMode.Straight:
                 return straightDir.Value;
-            case MovementController.TurnMode.Right:
+            case TurnMode.Right:
                 return rightEndDir.Value;
             default:
                 Debug.LogError("Movement Controller Turn Mode undefined");
                 return straightDir.Value;
         }
     }
+    void UpdateTurnMode()
+    {
+        if (vrEnabled && turnMode.HasValue) // VR MODE
+        {
+            var angle = cam.transform.parent.localEulerAngles;
+            //tmpro.text = $"turnmode: {(turnMode == TurnMode.Left ? "left" : turnMode == TurnMode.Right ? "right" : "straight")} speed: {speed}";
+            if (angle.z < minTurnAngle || angle.z > 360 - minTurnAngle)
+            {
+                turnMode = TurnMode.Straight;
+            }
+            else if (angle.z > 180)
+            {
+                turnMode = TurnMode.Right;
+            }
+            else if (angle.z < 180)
+            {
+                turnMode = TurnMode.Left;
+            }
+        }
+        else if (turnMode.HasValue) // NON VR MODE
+        {
+            if (Input.GetKey(KeyCode.LeftArrow)) turnMode = TurnMode.Left;
+            else if (Input.GetKey(KeyCode.RightArrow)) turnMode = TurnMode.Right;
+            else turnMode = TurnMode.Straight;
+        }
+    }
     void Update()
     {
+        float diff = 0;
+        if (vrEnabled && turnMode.HasValue) // VR MODE
+        {
+            diff = Mathf.Abs((lastLeftPos - leftController.transform.position).magnitude) + Mathf.Abs((lastRightPos - rightController.transform.position).magnitude) * Time.deltaTime / 2f;
+        }
+
+        // Acceleration
+        bool doAccel = vrEnabled ? diff >= minDiff : Input.GetKey(KeyCode.Space);
+        if (doAccel)
+        {
+            speed += accel * Time.deltaTime;
+            speed = Mathf.Min(speed, maxSpeed);
+        }
+        else
+        {
+            speed -= decel * Time.deltaTime;
+            speed = Mathf.Max(speed, 0);
+        }
+
+        // Update Previous Positions.
+        if (vrEnabled)
+        {
+            lastLeftPos = leftController.transform.position;
+            lastRightPos = rightController.transform.position;
+        }
+
         Vector2 grid = TileGrid.WorldToGrid(transform.position);
-        
+
         if (grid != gridPos)
         {
-            print("new grid " + grid);
+            print("new grid " + grid + ", time: " + Time.time);
             gridPos = grid;
 
-            switch (turnMode != null? GetDir(turnMode.Value): HexTile.StartDir.N)
+            switch (turnMode.HasValue ? GetDir(turnMode.Value) : HexTile.StartDir.N)
             {
                 case HexTile.StartDir.N: startDir = HexTile.StartDir.S; break;
                 case HexTile.StartDir.S: startDir = HexTile.StartDir.N; break;
@@ -62,38 +132,40 @@ public class TestPathFollower : MonoBehaviour
             ComputeEndDirs();
 
             t = 0;
-            if (straightDir.HasValue)
+
+            // Select Turn
+            UpdateTurnMode();
+
+            // Correct Turn Mode if an option does not exist.
+            if (turnMode == TurnMode.Left && !leftEndDir.HasValue)
+                turnMode = straightDir.HasValue ? TurnMode.Straight : TurnMode.Right;
+            else if (turnMode == TurnMode.Right && !rightEndDir.HasValue)
+                turnMode = straightDir.HasValue ? TurnMode.Straight : TurnMode.Left;
+            else if (turnMode == TurnMode.Straight && !straightDir.HasValue)
+                turnMode = leftEndDir.HasValue ? TurnMode.Left : TurnMode.Right;
+            else if (turnMode == null)
+                turnMode = TurnMode.Straight;
+
+            print("turnmode " + turnMode);
+            switch (turnMode)
             {
-                endPos = GetPosition(gridPos, straightDir.Value);
-                turnMode = MovementController.TurnMode.Straight;
+                case TurnMode.Straight: endPos = GetPosition(gridPos, straightDir.Value); break;
+                case TurnMode.Right: endPos = GetPosition(gridPos, rightEndDir.Value); break;
+                case TurnMode.Left: endPos = endPos = GetPosition(gridPos, leftEndDir.Value); break;
+                default: print("TurnMode Unknown ERROR"); break;
             }
-            else if (rightEndDir.HasValue)
-            {
-                endPos = GetPosition(gridPos, rightEndDir.Value);
-                turnMode = MovementController.TurnMode.Right;
-            }
-            else if (leftEndDir.HasValue)
-            {
-                endPos = GetPosition(gridPos, leftEndDir.Value);
-                turnMode = MovementController.TurnMode.Left;
-            }
-            else
-            {
-                print("FFFFFFFFAAAA");
-            }
-            
-            
         }
+
+        // Update Position.
         t += speed * Time.deltaTime;
-        //var strPos = GetPosition(gridPos, GetDir((GetDeg(startDir) + 180) % 360));
-        transform.position = Vector3.LerpUnclamped(Vector3.LerpUnclamped(startPos, TileGrid.GridToWorld(gridPos), t), Vector3.LerpUnclamped(TileGrid.GridToWorld(gridPos), endPos, t),t);
-        //print($"{startPos}, {TileGrid.GridToWorld(gridPos)}, {endPos}");
-        //print(transform.position);
-
-
-        // get potential options from new grid.
-
-
+        var oldPos = transform.position;
+        transform.position = Vector3.LerpUnclamped(Vector3.LerpUnclamped(startPos, TileGrid.GridToWorld(gridPos), t), Vector3.LerpUnclamped(TileGrid.GridToWorld(gridPos), endPos, t), t);
+        if (oldPos != transform.position)
+        {
+            var currDir = transform.position - oldPos;
+            var angle = (currDir.x < 0? -1 : 1) * Vector2.Angle(Vector2.up, new Vector2(currDir.x, currDir.z));
+            transform.rotation = Quaternion.Euler(new Vector3(0, angle, 0));
+        }
     }
     float GetRotation(HexTile.StartDir dir)
     {
@@ -125,16 +197,6 @@ public class TestPathFollower : MonoBehaviour
             case HexTile.StartDir.NW:
                 return 120;
         }
-        return 0;
-    }
-    HexTile.StartDir GetDir(float rad, float epsilon = 0.01f)
-    {
-        if (Mathf.Abs(rad - (Mathf.PI / 2)) < epsilon) return HexTile.StartDir.N;
-        else if (Mathf.Abs(rad - (-Mathf.PI / 2)) < epsilon) return HexTile.StartDir.N;
-        else if (Mathf.Abs(rad - (4 * Mathf.PI / 6)) < epsilon) return HexTile.StartDir.N;
-        else if (Mathf.Abs(rad - (-4 * Mathf.PI / 6)) < epsilon) return HexTile.StartDir.N;
-        else if (Mathf.Abs(rad - (Mathf.PI / 6)) < epsilon) return HexTile.StartDir.N;
-        else if (Mathf.Abs(rad - (-Mathf.PI / 6)) < epsilon) return HexTile.StartDir.N;
         return 0;
     }
     HexTile.StartDir GetDir(int deg)
