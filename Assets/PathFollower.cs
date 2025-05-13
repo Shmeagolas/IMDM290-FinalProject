@@ -90,6 +90,7 @@ public class PathFollower : MonoBehaviour
         if (vrEnabled && turnMode.HasValue) // VR MODE
         {
             diff = Mathf.Abs((lastLeftPos - leftController.transform.position).magnitude) + Mathf.Abs((lastRightPos - rightController.transform.position).magnitude) * Time.deltaTime / 2f;
+            print("diff: " + diff);
         }
 
         // Acceleration

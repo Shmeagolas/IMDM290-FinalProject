@@ -7043,13 +7043,13 @@ MonoBehaviour:
   cam: {fileID: 238419128}
   maxSpeed: 0.5
   accel: 0.25
-  decel: 0.2
-  minDiff: 0.005
+  decel: 0.8
+  minDiff: 0.01
   minTurnAngle: 10
   leftController: {fileID: 1991658503}
   rightController: {fileID: 746113881}
   tmpro: {fileID: 0}
-  vrEnabled: 1
+  vrEnabled: 0
 --- !u!4 &1644116028
 Transform:
   m_ObjectHideFlags: 0
