@@ -14,6 +14,7 @@ public class PathFollower : MonoBehaviour
     public GameObject cam;
     public float maxSpeed;
     float speed;
+    public const float worldScale = 3;
     public float accel;
     public float decel;
     public float minDiff = 0.01f;
@@ -128,7 +129,7 @@ public class PathFollower : MonoBehaviour
                 case HexTile.StartDir.SE: startDir = HexTile.StartDir.NW; break;
                 default: startDir = HexTile.StartDir.S; break;
             }
-            startPos = GetPosition(gridPos, startDir);
+            startPos = transform.position; // GetPosition(gridPos, startDir);
             ComputeEndDirs();
 
             t = 0;
@@ -164,7 +165,8 @@ public class PathFollower : MonoBehaviour
         {
             var currDir = transform.position - oldPos;
             var angle = (currDir.x < 0? -1 : 1) * Vector2.Angle(Vector2.up, new Vector2(currDir.x, currDir.z));
-            transform.rotation = Quaternion.Euler(new Vector3(0, angle, 0));
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, angle, 0)), Time.deltaTime * 5.0f);
         }
     }
     float GetRotation(HexTile.StartDir dir)
@@ -222,7 +224,7 @@ public class PathFollower : MonoBehaviour
     {
         float rot = 0;
         rot = GetRotation(dir);
-        return TileGrid.GridToWorld(gridPos) + new Vector3(Mathf.Cos(rot), 0, Mathf.Sin(rot));
+        return TileGrid.GridToWorld(gridPos) + new Vector3(worldScale * Mathf.Cos(rot), 0, worldScale * Mathf.Sin(rot));
     }
     void ComputeEndDirs()
     {

@@ -23,6 +23,15 @@ public static class TileGrid
     public static Vector2 WorldToGrid(Vector3 worldPos)
     {
         int x = Mathf.RoundToInt(worldPos.x / width);
+        float zOffset = (x % 2 == 0) ? 0f : height / 2f;
+        int y = Mathf.RoundToInt((worldPos.z - zOffset) / height);
+        return new Vector2(x, y);
+    }
+    /*
+    public static Vector2 WorldToGrid(Vector3 worldPos)
+    {
+        worldPos = new Vector3(worldPos.x / width, 0f, worldPos.y / height);
+        int x = Mathf.RoundToInt(worldPos.x / width);
 
         // Check if this is an odd column
         bool isOdd = x % 2 != 0;
@@ -32,5 +41,5 @@ public static class TileGrid
         int y = Mathf.RoundToInt(adjustedZ / height);
 
         return new Vector2(x, y);
-    }
+    }*/
 }
