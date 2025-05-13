@@ -394,6 +394,7 @@ MonoBehaviour:
     m_Reference: {fileID: 0}
   numMiners: 10
   minerSpawnPoints: []
+  minerPrefab: {fileID: 4068602342651352066, guid: f8138adaa5151e84799610ca94aa316c, type: 3}
   numShrooms: 0
   shroomSpawnPoints: []
 --- !u!4 &1979081413

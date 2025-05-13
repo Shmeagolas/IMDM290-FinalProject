@@ -12,13 +12,13 @@ public class MinerSpawn : MonoBehaviour
     // miner vars
     public int numMiners; // set number of miners
     public List<GameObject> minerSpawnPoints; // should add in unity
-
+    [SerializeField] private GameObject minerPrefab;
     private List<GameObject> miners = new List<GameObject>(); 
     private List<bool> minerSavedStatus = new List<bool>();
 
     // mushroom vars
 
-    public int numShrooms; // set number of miners
+    public int numShrooms; // set number of miners 
     public List<GameObject> shroomSpawnPoints; // should add in unity
 
     private List<GameObject> mushrooms = new List<GameObject>(); 
@@ -56,12 +56,14 @@ public class MinerSpawn : MonoBehaviour
 
         for (int i = 0; i < numMiners && availableMinerSpawns.Count > 0; i++)
         {
-            // gets a random spawn point
+            //// gets a random spawn point
             int index = Random.Range(0, availableMinerSpawns.Count);
             Transform spawnPoint = availableMinerSpawns[index].transform;
 
-            // create miner and set it's position to that spawn point
-            GameObject miner = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //// create miner and set it's position to that spawn point
+            //GameObject miner = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+
+            GameObject miner = GameObject.Instantiate(minerPrefab);
 
             Vector3 offset = new Vector3(0, 0.5f, 0);
             miner.transform.position = spawnPoint.position + offset;
@@ -70,15 +72,17 @@ public class MinerSpawn : MonoBehaviour
             miner minerComponent = miner.AddComponent<miner>();
             minerComponent.index = i;
 
-            Renderer sphereRenderer = miner.GetComponent<Renderer>();
-            Color color = Color.HSVToRGB(30f / 360f, 0.3f, 0.85f); // Full saturation and brightness
-            sphereRenderer.material.color = color;
+            //Renderer sphereRenderer = miner.GetComponent<Renderer>();
+            //Color color = Color.HSVToRGB(30f / 360f, 0.3f, 0.85f); // Full saturation and brightness
+            //sphereRenderer.material.color = color;
 
             // initalize the miner to true so it can be counted
             miners.Add(miner);
             minerSavedStatus.Add(false);
 
             availableMinerSpawns.RemoveAt(index);
+
+
         }
     }
 
