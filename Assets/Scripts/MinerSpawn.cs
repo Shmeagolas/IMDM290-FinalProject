@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-//using UnityEditor.Experimental.Rendering;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 // this class should keep track of all the spawn points in the game and randomly spread the miners throughout them, 
@@ -10,7 +9,6 @@ using UnityEngine.InputSystem;
 // this class should also keep track of all the mushroom spawn points and randomly put mushrooms throughout them,
 public class MinerSpawn : MonoBehaviour
 {
-    public static MinerSpawn Instance;
     public InputActionProperty rightTriggerAction;
     // miner vars
     public int numMiners; // set number of miners
@@ -41,12 +39,7 @@ public class MinerSpawn : MonoBehaviour
     //randomly spawn the miners throughout the spawnpoints
     void Start()
     {
-        Instance = this;    
         StartCoroutine(DelayedSpawn());
-    }
-    private void Update()
-    {
-        cawcaw();
     }
 
     IEnumerator DelayedSpawn()
@@ -54,7 +47,6 @@ public class MinerSpawn : MonoBehaviour
         yield return null; // wait one frame
         SpawnMiners();
         SpawnMushrooms();
-        cawcaw();
     }
 
     void SpawnMiners() 
@@ -74,12 +66,14 @@ public class MinerSpawn : MonoBehaviour
 
             GameObject miner = GameObject.Instantiate(minerPrefab);
 
-            Vector3 offset = new Vector3(0, 0.5f, 0);
+            Vector3 offset = new Vector3(0, 0.2f, 0);
             miner.transform.position = spawnPoint.position + offset;
             miner.transform.rotation = spawnPoint.rotation;
 
             miner minerComponent = miner.AddComponent<miner>();
             minerComponent.index = i;
+
+            miner.transform.GetChild(0).GetComponent<Animator>().Play("mixamo_com", 0, Random.Range(0f, 1f));
 
             //Renderer sphereRenderer = miner.GetComponent<Renderer>();
             //Color color = Color.HSVToRGB(30f / 360f, 0.3f, 0.85f); // Full saturation and brightness
@@ -107,24 +101,6 @@ public class MinerSpawn : MonoBehaviour
         }
     }
 
-    public bool IsAllMinersSaved()
-    {
-        foreach (var stat in minerSavedStatus)
-        {
-            print("wow");
-            if (stat == false) return false;
-        }
-        return true;
-    }
-    public int GetMinerCount()
-    {
-        int i = 0;
-        foreach (var stat in minerSavedStatus)
-        {
-            if (stat == true) i += 1;
-        }
-        return i;
-    }
     //count all the true in the miners saved list of bools. If everything is true: Win
     // otherwise return x/total miners saved 
     void ReturnFinalCount()
@@ -181,25 +157,6 @@ public class MinerSpawn : MonoBehaviour
                     SaveMiner(minerComponent.index);
                     
                 }
-            }
-        }
-    }
-
-    public void cawcaw()
-    {
-        float triggerValue = rightTriggerAction.action.ReadValue<float>();
-        Debug.Log("Trigger value: " + triggerValue);
-
-        if (triggerValue == 1)
-        {
-            int i = 0;
-            foreach (var miner in miners)
-            {
-                if (TileGrid.WorldToGrid(miner.transform.position) == PathFollower.gridPos)
-                {
-                    SaveMiner(i);
-                }
-                i++;
             }
         }
     }

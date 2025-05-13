@@ -4,8 +4,8 @@ using UnityEngine;
 
 public static class TileSpawner
 {
-    [SerializeField] public static GameObject[] tiles = new GameObject[7];
-
+    public static GameObject[] tiles = new GameObject[7];
+    public static int minersPerTile = 3;
     private static readonly Dictionary<HexTile.TileType, Queue<GameObject>> pool = new();
     private static readonly List<GameObject> activeTiles = new();
 
@@ -108,7 +108,7 @@ public static class TileSpawner
         int chosen = Random.Range(0, count);
         for (int i = 0; i < count; i++)
         {
-            var child = go.transform.GetChild(i).gameObject;
+            var child = go.transform.GetChild(i + minersPerTile).gameObject;
             child.SetActive(i == chosen);
         }
     }
