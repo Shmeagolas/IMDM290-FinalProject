@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 // this class should keep track of all the spawn points in the game and randomly spread the miners throughout them, 
@@ -65,12 +66,14 @@ public class MinerSpawn : MonoBehaviour
 
             GameObject miner = GameObject.Instantiate(minerPrefab);
 
-            Vector3 offset = new Vector3(0, 0.5f, 0);
+            Vector3 offset = new Vector3(0, 0.2f, 0);
             miner.transform.position = spawnPoint.position + offset;
             miner.transform.rotation = spawnPoint.rotation;
 
             miner minerComponent = miner.AddComponent<miner>();
             minerComponent.index = i;
+
+            miner.transform.GetChild(0).GetComponent<Animator>().Play("mixamo_com", 0, Random.Range(0f, 1f));
 
             //Renderer sphereRenderer = miner.GetComponent<Renderer>();
             //Color color = Color.HSVToRGB(30f / 360f, 0.3f, 0.85f); // Full saturation and brightness
