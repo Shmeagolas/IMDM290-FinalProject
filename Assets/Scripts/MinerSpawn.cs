@@ -118,6 +118,7 @@ public class MinerSpawn : MonoBehaviour
     // if a miner is in a certain range of the player
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Something is int the collider");
         IBubbleTarget target = other.GetComponent<IBubbleTarget>();
         if (target != null && miners.Contains(other.gameObject))
         {
