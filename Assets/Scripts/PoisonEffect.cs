@@ -1,50 +1,58 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PoisonEffect : MonoBehaviour
 {
-    public float delayBeforeFlash = 10f; //120
-    public float flashSpeed = 1f;         
-
-    private CanvasGroup canvasGroup;
-    private bool shouldFlash = false;
-    private float direction = 1f;
+    private RawImage rawImage;
+    private float alpha = 0f;
+    public GameObject finalScreen;
+    private float startTime;
+    private bool canFade = false;
 
     void Start()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-        {
-            Debug.LogError("No CanvasGroup component found on this GameObject.");
-            enabled = false;
-            return;
-        }
-
-        StartFlashing();
-    }
-
-    void StartFlashing()
-    {
-        Debug.Log("FlashCanvasAfterDelay: Starting flashing...");
-        shouldFlash = true;
+        rawImage = GetComponent<RawImage>();
+        finalScreen.SetActive(false);
+        SetAlpha(0f);
+        startTime = Time.time;
     }
 
     void Update()
     {
-        if (shouldFlash)
+        if (!canFade)
         {
-            canvasGroup.alpha += direction * flashSpeed * Time.deltaTime;
-            Debug.Log(canvasGroup.alpha);
-
-            if (canvasGroup.alpha >= 1f)
+            if (Time.time - startTime >= 120f) // 2 minutes
             {
-                canvasGroup.alpha = 1f;
-                direction = -1f;
+                Debug.Log("starting the poisons ooooh");
+                canFade = true;
             }
-            else if (canvasGroup.alpha <= 0f)
+            else
             {
-                canvasGroup.alpha = 0f;
-                direction = 1f;
+                return;
             }
         }
+
+        if (alpha < 0.25f)
+        {
+            alpha += 0.00001f; // increase by 1% per frame
+            if (alpha > 1f) alpha = 1f; // clamp to 1
+            SetAlpha(alpha);
+        } else
+        {
+            // Game Over
+            DisplayFinalScore();
+        }
+    }
+
+    void SetAlpha(float a)
+    {
+        Color color = rawImage.color;
+        color.a = a;
+        rawImage.color = color;
+    }
+
+    void DisplayFinalScore()
+    {
+        finalScreen.SetActive(true);
     }
 }
