@@ -44,7 +44,7 @@ public class PathFollower : MonoBehaviour
     float t = 0;
     void Start()
     {
-        map = PremadeMaps.mapOne;
+        map = PremadeMaps.mapTwo;
     }
 
     HexTile.StartDir GetDir(TurnMode mode)
