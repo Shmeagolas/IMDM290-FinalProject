@@ -1,9 +1,9 @@
 Canary is a game that simulates being a canary in a coal mine saving miners
 
-There is video documentation of us playing in the repo, in case it is needed.
+Video Documentation: https://drive.google.com/drive/folders/1XPFY_KmZDM4t8w_xxvpFLvwVdQICYtAS?usp=sharing
 
 Ella Goodbinder;
-Samuel Wiggins;
 Ethan Paley;
+Samuel Wiggins;
 Andie Sjaarda;
 Hong Lim Mun;
